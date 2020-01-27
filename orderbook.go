@@ -51,7 +51,7 @@ func (ob OrderBook) Orders() ([]OrderEvent, bool) {
 
 // OrderBy returns the order by a select function from the order book.
 func (ob OrderBook) OrderBy(fn func(order OrderEvent) bool) ([]OrderEvent, bool) {
-	var orders = []OrderEvent{}
+	var orders = make([]OrderEvent, 0)
 
 	for _, order := range ob.orders {
 		if fn(order) {

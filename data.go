@@ -194,3 +194,39 @@ func (t Tick) Price() float64 {
 func (t Tick) Spread() float64 {
 	return t.Bid - t.Ask
 }
+
+// TickEvent declares a bar event interface.
+type DepthEvent interface {
+	DataEvent
+	Spreader
+}
+
+// Tick declares a data event for a price tick.
+type Depth struct {
+	Event
+	Metric
+	Bids DepthList
+	Asks DepthList
+}
+
+type DepthList []List
+
+type List struct {
+	Price    float64
+	Quantity float64
+}
+
+func (d DepthList) Len() int {
+	return len(d)
+}
+
+// Price returns the middle of Bid and Ask.
+func (t Depth) Price() float64 {
+	latest := (t.Bids[0].Price + t.Asks[0].Price) / float64(2)
+	return latest
+}
+
+// Spread returns the difference or spread of Bid and Ask.
+func (t Depth) Spread() float64 {
+	return t.Asks[0].Price - t.Bids[0].Price
+}

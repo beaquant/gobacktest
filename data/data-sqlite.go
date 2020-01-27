@@ -2,9 +2,7 @@ package data
 
 import (
 	"errors"
-	"io/ioutil"
 	"log"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -72,40 +70,8 @@ func (d *BarEventFromSQLiteData) Load(symbols []string) error {
 	return nil
 }
 
-// fetchFilesFromDir returns a map of all filenames in a directory,
-// e.g. map{"BAS.DE": "BAS.DE.csv"},
-func fetchTableFromDB(dir string) (m map[string]string, err error) {
-	// read filenames from directory
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return m, err
-	}
-
-	// initialise the map
-	m = make(map[string]string)
-
-	// read filenames from directory
-	for _, file := range files {
-		// file is directory
-		if file.IsDir() {
-			continue
-		}
-
-		filename := file.Name()
-		extension := filepath.Ext(filename)
-		// file is not CSV
-		if extension != ".csv" {
-			continue
-		}
-
-		name := filename[0 : len(filename)-len(extension)]
-		m[name] = filename
-	}
-	return m, nil
-}
-
 // createBarEventFromLine takes a key/value map and a string and builds a bar struct.
-func createBarEventFromEntry(line map[string]string, symbol string) (bar gbt.BarEvent, err error) {
+func createTickerTickerEventFromEntry(line map[string]string, symbol string) (bar gbt.BarEvent, err error) {
 	// parse each string in line to corresponding record value
 	date, _ := time.Parse("2006-01-02", line["Date"])
 	openPrice, _ := strconv.ParseFloat(line["Open"], 64)
